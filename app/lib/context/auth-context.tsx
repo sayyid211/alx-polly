@@ -24,20 +24,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
+    const getSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
       if (error) {
-        console.error('Error fetching user:', error);
+        console.error('Error fetching session:', error);
       }
       if (mounted) {
-        setUser(data.user ?? null);
-        setSession(null);
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
         setLoading(false);
-        console.log('AuthContext: Initial user loaded', data.user);
+        console.log('AuthContext: Initial session loaded', data.session);
       }
     };
 
-    getUser();
+    getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
