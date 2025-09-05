@@ -41,3 +41,8 @@ Before finalizing your response, you MUST verify the following:
 - Is the Supabase client used for all database interactions?
 - Are shadcn/ui components used for the UI where appropriate?
 - Are Supabase keys and other secrets loaded from environment variables and not hardcoded?
+
+## response pattern
+When attending to prompts, follow the response pattern below:
+- don't rush to take multiple actions, always take one action at a time, always work on one issue, one file at a time unless if the routine must involve multiple files.
+

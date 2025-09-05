@@ -81,9 +81,24 @@ npm install
 
 ### 3. Environment Variables
 
-The project uses Supabase for its backend. An environment file `.env.local` is needed.Use the keys you created during the Supabase setup process.
+The project uses Supabase for its backend. An environment file `.env.local` is needed. Use the keys you created during the Supabase setup process.
 
-### 4. Running the Development Server
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SECRET_KEY=your-supabase-service-role-key
+```
+
+### 4. Database Setup
+
+The application requires a Supabase database with the correct schema. You can find the schema definition in the `supabase/schema.sql` file. To set up your database:
+
+1. Navigate to the SQL Editor in your Supabase dashboard
+2. Copy the contents of `supabase/schema.sql`
+3. Paste into the SQL Editor and run the script
+4. Optionally, you can run the `supabase/seed.sql` script to populate the database with test data
+
+### 5. Running the Development Server
 
 Start the application in development mode:
 
