@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/card";
 import { deletePoll } from "@/app/lib/actions/poll-actions";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/app/lib/context/auth-context";
+import { useRouter } from "next/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface Poll {
   id: string;
@@ -24,10 +28,42 @@ export default function AdminPage() {
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    fetchAllPolls();
-  }, []);
+    if (user) {
+      checkUserRole();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (isAuthorized) {
+      fetchAllPolls();
+    }
+  }, [isAuthorized]);
+
+  const checkUserRole = async () => {
+    if (!user) return;
+    
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!error && data) {
+      setUserRole(data.role);
+      setIsAuthorized(data.role === 'admin');
+    } else {
+      setIsAuthorized(false);
+    }
+    
+    setLoading(false);
+  };
 
   const fetchAllPolls = async () => {
     const supabase = createClient();
@@ -56,6 +92,23 @@ export default function AdminPage() {
 
   if (loading) {
     return <div className="p-6">Loading all polls...</div>;
+  }
+
+  if (!isAuthorized) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">Admin Panel</h1>
+        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Unauthorized Access</AlertTitle>
+          <AlertDescription>
+            You do not have permission to access the admin dashboard. Please contact an administrator if you believe this is an error.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
   }
 
   return (

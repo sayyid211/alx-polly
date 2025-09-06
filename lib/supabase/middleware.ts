@@ -19,9 +19,16 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Add SameSite=Lax and Secure attributes to cookies for CSRF protection
+            const secureOptions = {
+              ...options,
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+              httpOnly: true
+            }
+            supabaseResponse.cookies.set(name, value, secureOptions)
+          })
         },
       },
     }

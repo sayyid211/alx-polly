@@ -1,7 +1,9 @@
 -- ALX Polly Database Schema
 
 -- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
+-- JWT secret should be set via environment variable in production
+-- This is a placeholder that will be replaced by the actual secret in deployment
+ALTER DATABASE postgres SET "app.jwt_secret" TO '${JWT_SECRET}';
 
 -- Create tables
 
@@ -11,6 +13,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   name TEXT,
   avatar_url TEXT,
+  role TEXT DEFAULT 'user',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );

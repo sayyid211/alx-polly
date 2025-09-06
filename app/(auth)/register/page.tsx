@@ -7,10 +7,37 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { register } from '@/app/lib/actions/auth-actions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [passwordStrength, setPasswordStrength] = useState<number>(0);
+
+  const validatePassword = (password: string): { valid: boolean; message?: string } => {
+    if (password.length < 8) {
+      return { valid: false, message: 'Password must be at least 8 characters long' };
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+    
+    if (!/[0-9]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+    
+    if (!/[^A-Za-z0-9]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one special character' };
+    }
+    
+    return { valid: true };
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,6 +51,13 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+    
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      setError(passwordValidation.message || 'Invalid password');
       setLoading(false);
       return;
     }
@@ -76,7 +110,47 @@ export default function RegisterPage() {
                 type="password" 
                 required
                 autoComplete="new-password"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+                  
+                  // Calculate password strength
+                  let strength = 0;
+                  if (value.length >= 8) strength += 1;
+                  if (/[A-Z]/.test(value)) strength += 1;
+                  if (/[a-z]/.test(value)) strength += 1;
+                  if (/[0-9]/.test(value)) strength += 1;
+                  if (/[^A-Za-z0-9]/.test(value)) strength += 1;
+                  
+                  setPasswordStrength(strength);
+                }}
               />
+              {password && (
+                <div className="mt-2">
+                  <div className="flex items-center">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${passwordStrength === 0 ? 'bg-red-500' : 
+                          passwordStrength === 1 ? 'bg-red-500' : 
+                          passwordStrength === 2 ? 'bg-orange-500' : 
+                          passwordStrength === 3 ? 'bg-yellow-500' : 
+                          passwordStrength === 4 ? 'bg-lime-500' : 'bg-green-500'}`} 
+                        style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="ml-2 text-xs">
+                      {passwordStrength === 0 ? 'Very weak' : 
+                       passwordStrength === 1 ? 'Weak' : 
+                       passwordStrength === 2 ? 'Fair' : 
+                       passwordStrength === 3 ? 'Good' : 
+                       passwordStrength === 4 ? 'Strong' : 'Very strong'}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Password must be at least 8 characters with uppercase, lowercase, number, and special character.
+                  </div>
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
