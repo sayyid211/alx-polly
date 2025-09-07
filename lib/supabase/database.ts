@@ -1,8 +1,11 @@
-// Utility functions for interacting with Supabase database
+/**
+ * Utility functions for interacting with Supabase database
+ */
 import { createClient } from './server';
 
 /**
- * Get poll results with vote counts for each option
+ * Get poll results with vote counts for each option.
+ * Calls Supabase RPC function 'get_poll_results'.
  * @param pollId - The ID of the poll
  * @returns Array of option indexes and their vote counts
  */
@@ -21,7 +24,8 @@ export async function getPollResults(pollId: string) {
 }
 
 /**
- * Check if a user has already voted on a poll
+ * Check if a user has already voted on a poll.
+ * Calls Supabase RPC function 'has_user_voted'.
  * @param pollId - The ID of the poll
  * @param userId - The ID of the user
  * @returns Boolean indicating if the user has voted
@@ -44,7 +48,8 @@ export async function hasUserVoted(pollId: string, userId: string) {
 }
 
 /**
- * Get total votes for a poll
+ * Get total votes for a poll.
+ * Counts rows in the 'votes' table for the given poll.
  * @param pollId - The ID of the poll
  * @returns Number of total votes
  */
@@ -65,7 +70,8 @@ export async function getTotalVotes(pollId: string) {
 }
 
 /**
- * Get polls with their vote counts
+ * Get all polls with their vote counts.
+ * Fetches all polls and appends totalVotes for each.
  * @returns Array of polls with vote counts
  */
 export async function getPollsWithVoteCounts() {
