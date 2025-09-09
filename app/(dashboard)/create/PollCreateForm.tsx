@@ -41,7 +41,7 @@ export default function PollCreateForm() {
     >
       <div>
         <Label htmlFor="question">Poll Question</Label>
-        <Input name="question" id="question" required />
+        <Input name="question" id="question" />
       </div>
       <div>
         <Label>Options</Label>
@@ -51,7 +51,6 @@ export default function PollCreateForm() {
               name="options"
               value={opt}
               onChange={(e) => handleOptionChange(idx, e.target.value)}
-              required
             />
             {options.length > 2 && (
               <Button type="button" variant="destructive" onClick={() => removeOption(idx)}>

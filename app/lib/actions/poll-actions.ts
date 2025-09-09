@@ -12,7 +12,8 @@ export async function createPoll(formData: FormData) {
   const supabase = await createClient();
 
   const question = formData.get("question") as string;
-  const options = formData.getAll("options").filter(Boolean) as string[];
+    const options = formData.getAll("options").map(String).filter(Boolean);
+
 
   if (!question || options.length < 2) {
     return { error: "Please provide a question and at least two options." };
@@ -238,7 +239,7 @@ export async function updatePoll(pollId: string, formData: FormData) {
   }
 
   const question = formData.get("question") as string;
-  const options = formData.getAll("options").filter(Boolean) as string[];
+  const options = formData.getAll("options").map(String).filter(Boolean);
 
   // Sanitize and validate inputs
   const sanitizedQuestion = question?.trim();

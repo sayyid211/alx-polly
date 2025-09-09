@@ -50,7 +50,7 @@ export default function EditPollForm({ poll }: { poll: any }) {
           id="question"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          required
+          
         />
       </div>
       <div>
@@ -61,7 +61,7 @@ export default function EditPollForm({ poll }: { poll: any }) {
               name="options"
               value={opt}
               onChange={(e) => handleOptionChange(idx, e.target.value)}
-              required
+              
             />
             {options.length > 2 && (
               <Button type="button" variant="destructive" onClick={() => removeOption(idx)}>
